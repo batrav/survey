@@ -14,22 +14,24 @@ from .serializers import SurveyFormSerializers
 from rest_framework.views import APIView
 from rest_framework import viewsets
 from rest_framework.response import Response
+
 # Create your views here.
+
+# Redirecting homepage to survey
 
 
 def LandingPage(request):
     return HttpResponseRedirect("/new-survey/" + str(1))
 
 
+# a function to store files uploaded via form to a directory. can be further pushed to cloud
+
 def store_file_aws(file, file_name):
     with open("temp_aws/" + file_name, "wb+") as dest:
         for chunk in file.chunks():
             dest.write(chunk)
 
-
-def get_single_form_field(request):
-    pass
-
+## Core view to get Multi page Survey form save the details in DB on submit
 
 class CreateSurveyView(View):
 
@@ -58,7 +60,6 @@ class CreateSurveyView(View):
         })
 
     def post(self, request, *args, **kwargs):
-
         submitted_form = SurveyForm(request.POST, request.FILES)
         survey_form = {
             1: 'first_name',
@@ -81,29 +82,16 @@ class CreateSurveyView(View):
                            request.FILES.get(field_id).name)
         else:
             request.session[field_id] = request.POST.get(field_id)
-        print(f"############# {request.POST} ########## {request.FILES}")
+        # print(f"############# {request.POST} ########## {request.FILES}")
         if int(request.path.split("/")[2]) <= 10:
             # print('success')
             # profile_icon = request.FILES['profile_icon']
             # print(profile_icon)
             return HttpResponseRedirect("/new-survey/" + (request.path.split("/")[2]))
-        print(
-            f'############# {[request.session.get(value) for id , value in survey_form.items()]}')
-        # if int(request.path.split("/")[2]) == 11:
-        #     # print('success')
-        #     # return HttpResponseRedirect("/new-survey/"+ str(10))
-        #     # print(submitted_form)
-        #     submitted_form = SurveyForm(request.POST, request.FILES)
-        #     vaccine_proof = request.FILES['vaccine_proof']
-        #     print(vaccine_proof)
-        #     print(submitted_form.is_valid())
-
-        #     return HttpResponseRedirect("/thank-you")
-
+        # print(f'############# {[request.session.get(value) for id , value in survey_form.items()]}')
         # print('################# - 9')
-        print('yeahh')
-        # print(request.POST['fully_vaccinated'])
-        print(request.session.get)
+        # print('yeahh')
+        # print(request.session.get)
         survey = Survey(first_name=request.session.get('first_name'),
                         last_name=request.session.get('last_name'),
                         email_id=request.session.get('email_id'),
@@ -118,16 +106,17 @@ class CreateSurveyView(View):
                         vaccine_proof=request.session.get('vaccine_proof'))
         survey.save()
 
-        # store_file_aws(request.FILES['profile_icon'],
-        #                request.FILES['profile_icon'].name)
-        # store_file_aws(
-        #     request.FILES['vaccine_proof'], request.FILES['vaccine_proof'].name)
-
         return HttpResponseRedirect("/thank-you")
+
+# post submit of new record or edit, thank-you page is triggered
+
 
 class ThankYouView(View):
     def get(self, request):
         return render(request, "survey/thanks.html")
+
+
+# Getting a list of all the survey records in a View
 
 class SurveyListView(ListView):
     template_name = 'survey/survey_list.html'
@@ -141,9 +130,15 @@ class SurveyListView(ListView):
         print(type(data))
         return data
 
+
+# Returning a survey with all fields corresponding to a ID passed
+
 class SurveyDetailView(DetailView):
     template_name = "survey/survey_detail.html"
     model = Survey
+
+
+# form view to take ID as a get request and return a detailed record view post submit
 
 class SurveybyIDDetailView(View):
     def get(self, request):
@@ -165,6 +160,9 @@ class SurveybyIDDetailView(View):
 #     else:
 #         form = SurveyForm(instance=survey)
 #     return render(request, 'survey/create_survey.html', {'survey': survey})
+
+
+# Class to get a survey which needs to be edit in the form view & subsequent post will update the record in DB
 
 class EditSurveyView(View):
     def get(self, request, pk):
@@ -210,26 +208,28 @@ class EditSurveyView(View):
 
         return HttpResponseRedirect("/thank-you")
 
+
+# API get & post request handeled by serialized onjects
+
 class ApiDataView(APIView):
-    
+
     def get(self, request, *args, **kwargs):
-        try: 
-            # id = request.path.split("/")[2]
+        try:
             id = request.GET['key']
-            # print(request.path)  
-            print(int(id))          
-            if id !=None:
+            # print(request.path)
+            print(int(id))
+            if id != None:
                 survey_single = Survey.objects.get(pk=int(id))
                 serializer = SurveyFormSerializers(survey_single)
                 return Response(serializer.data)
-        except:  
-            print('in escept')          
+        except:
+            print('in escept')
             querys = Survey.objects.all()
             serializer = SurveyFormSerializers(querys, many=True)
             return Response(serializer.data)
-            
+
     def post(self, request, *args, **kwargs):
-        serializer  = SurveyFormSerializers(data=request.data)
+        serializer = SurveyFormSerializers(data=request.data)
         if serializer.is_valid():
             print('in post method')
             # print(serializer.data)
@@ -238,13 +238,9 @@ class ApiDataView(APIView):
             # queryset = Survey.objects.all()
         else:
             return Response(serializer.errors)
-    
+
 # from rest_framework import viewsets
 
 # class ApiDataView(viewsets.ModelViewSet):
 #     serializer_class = SurveyFormSerializers
 #     queryset = Survey.objects.all()
-
-
-
-# git@github.com:batrav/survey.git

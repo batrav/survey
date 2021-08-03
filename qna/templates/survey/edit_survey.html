@@ -9,16 +9,10 @@
   <link rel="stylesheet" href="{% static "survey/styles.css" %}">
 </head>
 <body>
-<h2><a href="{% url 'survey-list'  %}">All surveys</a></h2>
-
-{% if is_favourite %}
-
-    <p>this is my favourite</p>
-{% else %}
+  <h2><a href="{% url 'survey-list'  %}">All surveys</a></h2>
     <form action="{% url 'edit_survey_success' %}"  method = 'POST' enctype="multipart/form-data">
     {% csrf_token %}
     <input type="hidden" name="survey_id" value = {{pk}}>
-    
     {% for field  in form  %}  
         {% comment %} {{field.name }} {{survey_form.10}} {% endcomment %}
             <div class ="form-control {% if field.errors %} errors{% endif %} ">
@@ -29,7 +23,5 @@
     {% endfor %}    
   <button type='submit'>Submit</button>      
     </form>
-{% endif %}
-
 </body>
 </html> 
