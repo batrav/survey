@@ -1,0 +1,47 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fill Survey</title>
+  <link rel="stylesheet" href="{% static "survey/styles.css" %}">
+</head>
+<body>
+<h2><a href="{% url 'survey-list'  %}">View all surveys</a></h2>
+<h3 align='center'> Fill Survey </h3>
+
+{% if is_favourite %}
+
+    <p>this is my favourite</p>
+{% else %}
+    {% comment %} <form action="/new-survey/1"  method = 'POST' enctype="multipart/form-data"> {% endcomment %}
+    
+    <form action="{% url 'new-survey' next_field %}"  method = 'POST' enctype="multipart/form-data">
+    {% csrf_token %}
+    <input type="hidden" name="survey_id" value = "{{survey.id}}">
+
+    {% for field  in form  %}  
+        {% if field.name == display_field %}
+        {{field_id}}
+        {% comment %} {{field.name }} {{survey_form.10}} {% endcomment %}
+            <div class ="form-control {% if field.errors %} errors{% endif %} ">
+                {{field.label_tag}}
+                {{field }}
+                {{field.errors}}
+            </div>
+            {% if field.name != survey_form.10 %}
+             <button>Save and Next</button>
+             {% endif %} 
+                     {% if field.name == survey_form.10 %}
+                        <button type='submit'>Submit</button>        
+                    {% endif %} 
+        {% endif %}
+    {% endfor %}    
+
+    </form>
+{% endif %}
+
+</body>
+</html> 

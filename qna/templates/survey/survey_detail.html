@@ -1,0 +1,38 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Details for ID: {{survey.id}}</title>
+    <link rel="stylesheet" href="{% static "survey/styles.css" %}">
+</head>
+<body>
+
+<div style="margin-left: 2.5rem; margin-top: 2.5rem; margin-right: 2.5rem;">
+    {% comment %} {{survey.keys}} {% endcomment %}
+    <h5>Survey id: {{survey.pk}}</h5>
+   first_name:  {{survey.first_name}} <br>
+   last_name: {{survey.last_name}} <br>
+   email_id:  {{survey.email_id}} <br>
+   contact_no:  {{survey.contact_no}} <br>
+   zip_code : {{survey.zip_code}} <br>
+   city: {{survey.city}} <br>
+   own_house = {{survey.own_house }} <br>
+   fully_vaccinated : {{survey.fully_vaccinated}} <br>
+   {% if survey.profile_icon %}
+   profile_icon:  {{survey.profile_icon.path}} <br>
+   vaccine_proof: :  {{survey.vaccine_proof.path}} <br>
+   {% endif %}
+    <br>
+        <a style="margin-left: 0.0rem; margin-top: 2.5rem; margin-right: 2.5rem;"  href="{% url 'survey_edit' survey.pk %}">
+                      Edit Survey
+        </a>
+   <h2><a href="{% url 'survey-list'  %}">View all surveys</a></h2>
+   <h2><a href="{% url 'landing-page'  %}">Fill new surveys</a></h2>
+</div>
+   
+</body>
+</html>

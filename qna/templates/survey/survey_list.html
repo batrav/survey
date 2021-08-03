@@ -1,0 +1,40 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Surveys</title>
+     <link rel="stylesheet" href="{% static "survey/styles.css" %}">
+</head>
+<body>
+
+<h4 align='right' style="margin-top: 2.5rem; margin-right: 2.5rem;"><a href="{% url 'survey-by-id'  %}">Get survey by id</a></h4>
+{% comment %} <h4 align='right' style="margin-top: 0.5rem; margin-right: 2.5rem;"><a href="{% url 'new-survey'  %}">Fill new survey</a></h4> {% endcomment %}
+    
+    <h3 align='center'>All Surveys</h3>
+    <br>
+<ul >
+  {% for survey in surveys %}
+    <br/><br/>
+        <li> 
+            {% comment %} {% if survey.profile_icon %}
+                        {{survey.profile_icon.path}}                      
+                        <img src="{{ survey.profile_icon.url }}"  width="50" height="60" alt='NA'> 
+            {% endif %}
+            {% endcomment %}
+            <br>
+              <a href="{% url 'survey-detail-view' survey.id %}">
+                {{survey.id}}
+                {{survey.first_name}}                
+                {% comment %} (profile_icon:{{survey.profile_icon}}) {% endcomment %}
+              </a>  
+          </li>
+  {% endfor %}    
+   
+</ul>
+
+</body>
+</html>
